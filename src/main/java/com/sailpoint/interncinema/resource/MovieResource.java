@@ -2,6 +2,7 @@ package com.sailpoint.interncinema.resource;
 
 import com.google.inject.Inject;
 import com.sailpoint.interncinema.model.Movie;
+import com.sailpoint.interncinema.service.MovieRepository;
 import com.sailpoint.interncinema.service.Repository;
 
 import javax.ws.rs.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Path("movies")
 public class MovieResource {
 
-	private Repository _repository;
+	private Repository<Movie> _repository;
 
 	/* Uncomment to test on running server. */
 //	public MovieResource() {
