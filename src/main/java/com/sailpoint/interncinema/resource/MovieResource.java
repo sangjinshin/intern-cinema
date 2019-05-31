@@ -13,17 +13,18 @@ import java.util.List;
 @Path("movies")
 public class MovieResource {
 
-	private Repository<Movie> _repository;
+	@Inject
+	private Repository _repository;
 
 	/* Uncomment to test on running server. */
 //	public MovieResource() {
 //		_repository = new MovieRepository();
 //	}
 
-	@Inject
-	public MovieResource(Repository repository) {
-		this._repository = repository;
-	}
+//	@Inject
+//	public MovieResource(Repository repository) {
+//		this._repository = repository;
+//	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
