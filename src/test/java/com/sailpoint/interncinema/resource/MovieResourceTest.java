@@ -3,7 +3,7 @@ package com.sailpoint.interncinema.resource;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import com.sailpoint.interncinema.conf.MovieModule;
+import com.sailpoint.interncinema.conf.MovieRepositoryModule;
 import com.sailpoint.interncinema.model.Movie;
 import com.sailpoint.interncinema.model.MovieData;
 
@@ -23,7 +23,7 @@ public class MovieResourceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		injector = Guice.createInjector(new MovieModule());
+		injector = Guice.createInjector(new MovieRepositoryModule());
 	}
 
 	@After
