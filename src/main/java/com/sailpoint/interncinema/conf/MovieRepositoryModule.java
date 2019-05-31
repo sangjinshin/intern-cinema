@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule;
 import com.sailpoint.interncinema.service.MovieRepository;
 import com.sailpoint.interncinema.service.Repository;
 
-public class MovieModule extends AbstractModule {
+public class MovieRepositoryModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
