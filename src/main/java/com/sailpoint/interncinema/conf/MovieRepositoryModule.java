@@ -9,6 +9,5 @@ public class MovieRepositoryModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(Repository.class).to(MovieRepository.class);
-		//bind(Repository.class).toProvider(MovieRepositoryProvider.class);
 	}
 }
