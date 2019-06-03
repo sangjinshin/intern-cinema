@@ -113,4 +113,13 @@ public class MovieResourceTest {
 		assertNotNull(result);
 		assertEquals(Response.status(Response.Status.OK).build().getStatus(), result.getStatus());
 	}
+
+	@Test
+	public void deleteNullMovieTest() {
+		Long id = null;
+		Response result = _movieResource.deleteMovie(id);
+
+		assertNotNull(result);
+		assertEquals(Response.status(Response.Status.BAD_REQUEST).build().getStatus(), result.getStatus());
+	}
 }
