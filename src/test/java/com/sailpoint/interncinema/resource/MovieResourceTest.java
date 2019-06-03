@@ -1,111 +1,116 @@
 package com.sailpoint.interncinema.resource;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import com.sailpoint.interncinema.conf.MovieRepositoryModule;
 import com.sailpoint.interncinema.model.Movie;
 import com.sailpoint.interncinema.model.MovieData;
+import com.sailpoint.interncinema.service.Repository;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static junit.framework.TestCase.assertNotNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 
 public class MovieResourceTest {
-	private Injector injector;
+
+	@InjectMocks
+	MovieResource _movieResource;
+
+	@Mock
+	Repository _repository;
 
 	@Before
 	public void setUp() throws Exception {
-		injector = Guice.createInjector(new MovieRepositoryModule());
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		injector = null;
+		initMocks(this);
 	}
 
 	@Test
-	public void testMovieResource() {
-		getAllMoviesTest();
-		addMovieTest();
-		updateMovieTest();
-		deleteMovieTest();
+	public void getAllMoviesTest() {
+		List<Movie> movies = new ArrayList<>();
+		when(_repository.getAll()).thenReturn(movies);
+
+		List<Movie> result = _movieResource.getAllMovies();
+
+		verify(_repository).getAll();
+		assertNotNull(result);
+		assertEquals(movies, result);
 	}
 
-	private void getAllMoviesTest() {
-		MovieResource movieResource = injector.getInstance(MovieResource.class);
+	@Test
+	public void addValidMovieTest() {
+		Movie movie = new Movie(null, new MovieData("Title"));
+		Long id = 1L;
 
-		/* List of 'movie' should return empty on startup. */
-		ArrayList<Movie> fakeMovies = new ArrayList<>();
-		fakeMovies.add(new Movie(2L, new MovieData("title")));
-		assertNotEquals(fakeMovies, movieResource.getAllMovies());
+		when(_repository.add(movie)).thenReturn(id);
 
-		assertEquals(new ArrayList<Movie>(), movieResource.getAllMovies());
+		Response result = _movieResource.addMovie(movie);
+
+		verify(_repository).add(movie);
+		assertNotNull(result);
+		assertEquals(Response.status(Response.Status.CREATED).build().getStatus(), result.getStatus());
 	}
 
-	private void addMovieTest() {
-		MovieResource movieResource = injector.getInstance(MovieResource.class);
+	@Test
+	public void addNullMovieTest() {
+		Movie movie = null;
+		Response result = _movieResource.addMovie(movie);
 
-		Response expectedResponse = Response.status(Response.Status.CREATED).build();
-
-		/* Adding valid 'movie' should return status CREATED. */
-		Movie fakeMovie = new Movie(null, new MovieData("Fake Movie"));
-		assertEquals(expectedResponse.getStatus(), movieResource.addMovie(fakeMovie).getStatus());
-
-		/* Adding null 'movie' should return status BAD_REQUEST. */
-		fakeMovie = null;
-		expectedResponse = Response.status(Response.Status.BAD_REQUEST).build();
-		assertEquals(expectedResponse.getStatus(), movieResource.addMovie(fakeMovie).getStatus());
+		assertNotNull(result);
+		assertEquals(Response.status(Response.Status.BAD_REQUEST).build().getStatus(), result.getStatus());
 	}
 
-	private void updateMovieTest() {
-		MovieResource movieResource = injector.getInstance(MovieResource.class);
+	@Test
+	public void updateValidMovieTest() {
+		Long id = 1L;
+		Movie movie = new Movie(null, new MovieData("Title"));
+		Movie updatedMovie = new Movie(id, new MovieData("New Title"));
 
-		Response expectedResponse = Response.status(Response.Status.OK).build();
+		when(_repository.add(movie)).thenReturn(id);
+		when(_repository.update(updatedMovie)).thenReturn(updatedMovie);
 
-		/* Add a fake 'movie'. */
-		Movie fakeMovie = new Movie(null, new MovieData("Fake Movie"));
-		movieResource.addMovie(fakeMovie);
+		_movieResource.addMovie(movie);
+		Response result = _movieResource.updateMovie(updatedMovie);
 
-		/* Updating an existing 'movie' should return status OK. */
-		fakeMovie = new Movie(1L, new MovieData("Updated Movie"));
-		assertEquals(expectedResponse.getStatus(), movieResource.updateMovie(fakeMovie).getStatus());
-
-		/* Title of the updated 'movie' should match. */
-		assertEquals("Updated Movie", movieResource.getAllMovies().get(0).getMovieData().get_title());
-
-		/* Updating null 'movie' should return status BAD_REQUEST. */
-		fakeMovie = null;
-		expectedResponse = Response.status(Response.Status.BAD_REQUEST).build();
-		assertEquals(expectedResponse.getStatus(), movieResource.updateMovie(fakeMovie).getStatus());
+		verify(_repository).add(movie);
+		verify(_repository).update(updatedMovie);
+		assertNotNull(result);
+		assertEquals(Response.status(Response.Status.OK).build().getStatus(), result.getStatus());
 	}
 
-	private void deleteMovieTest() {
-		MovieResource movieResource = injector.getInstance(MovieResource.class);
+	@Test
+	public void updateNullMovieTest() {
+		Movie movie = null;
+		Response result = _movieResource.updateMovie(movie);
 
-		Response expectedResponse = Response.status(Response.Status.OK).build();
+		assertNotNull(result);
+		assertEquals(Response.status(Response.Status.BAD_REQUEST).build().getStatus(), result.getStatus());
+	}
 
-		/* Add a fake 'movie'. */
-		Movie fakeMovie = new Movie(null, new MovieData("Fake Movie"));
-		movieResource.addMovie(fakeMovie);
+	@Test
+	public void deleteValidMovieTest() {
+		Long id = 1L;
+		Movie movie = new Movie(null, new MovieData("Title"));
+		Movie deletedMovie = new Movie(id, new MovieData("Title"));
 
-		/* Deleting existing 'movie' should return status OK. */
-		for (Movie movie : movieResource.getAllMovies())
-			assertEquals(expectedResponse.getStatus(), movieResource.deleteMovie(movie.getId()).getStatus());
+		when(_repository.add(movie)).thenReturn(id);
+		when(_repository.delete(deletedMovie)).thenReturn(deletedMovie);
+		when(_repository.get(id)).thenReturn(deletedMovie);
 
-		/* Deleting null 'movie' should return status BAD_REQUEST. */
-		fakeMovie = null;
-		expectedResponse = Response.status(Response.Status.BAD_REQUEST).build();
-		assertEquals(expectedResponse.getStatus(), movieResource.deleteMovie(null).getStatus());
+		_movieResource.addMovie(movie);
+		Response result = _movieResource.deleteMovie(id);
 
-		/* List of 'movie' should be empty now. */
-		assertEquals(new ArrayList<Movie>(), movieResource.getAllMovies());
+		verify(_repository).add(movie);
+		verify(_repository).delete(deletedMovie);
+		assertNotNull(result);
+		assertEquals(Response.status(Response.Status.OK).build().getStatus(), result.getStatus());
 	}
 }
