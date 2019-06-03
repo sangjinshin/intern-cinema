@@ -26,7 +26,7 @@ public class MovieResourceTest {
 	MovieResource _movieResource;
 
 	@Mock
-	Repository _repository;
+	Repository _mockRepository;
 
 	@Before
 	public void setUp() throws Exception {
@@ -36,11 +36,11 @@ public class MovieResourceTest {
 	@Test
 	public void getAllMoviesTest() {
 		List<Movie> movies = new ArrayList<>();
-		when(_repository.getAll()).thenReturn(movies);
+		when(_mockRepository.getAll()).thenReturn(movies);
 
 		List<Movie> result = _movieResource.getAllMovies();
 
-		verify(_repository).getAll();
+		verify(_mockRepository).getAll();
 		assertNotNull(result);
 		assertEquals(movies, result);
 	}
@@ -50,11 +50,11 @@ public class MovieResourceTest {
 		Movie movie = new Movie(null, new MovieData("Title"));
 		Long id = 1L;
 
-		when(_repository.add(movie)).thenReturn(id);
+		when(_mockRepository.add(movie)).thenReturn(id);
 
 		Response result = _movieResource.addMovie(movie);
 
-		verify(_repository).add(movie);
+		verify(_mockRepository).add(movie);
 		assertNotNull(result);
 		assertEquals(Response.status(Response.Status.CREATED).build().getStatus(), result.getStatus());
 	}
@@ -74,14 +74,14 @@ public class MovieResourceTest {
 		Movie movie = new Movie(null, new MovieData("Title"));
 		Movie updatedMovie = new Movie(id, new MovieData("New Title"));
 
-		when(_repository.add(movie)).thenReturn(id);
-		when(_repository.update(updatedMovie)).thenReturn(updatedMovie);
+		when(_mockRepository.add(movie)).thenReturn(id);
+		when(_mockRepository.update(updatedMovie)).thenReturn(updatedMovie);
 
 		_movieResource.addMovie(movie);
 		Response result = _movieResource.updateMovie(updatedMovie);
 
-		verify(_repository).add(movie);
-		verify(_repository).update(updatedMovie);
+		verify(_mockRepository).add(movie);
+		verify(_mockRepository).update(updatedMovie);
 		assertNotNull(result);
 		assertEquals(Response.status(Response.Status.OK).build().getStatus(), result.getStatus());
 	}
@@ -101,15 +101,15 @@ public class MovieResourceTest {
 		Movie movie = new Movie(null, new MovieData("Title"));
 		Movie deletedMovie = new Movie(id, new MovieData("Title"));
 
-		when(_repository.add(movie)).thenReturn(id);
-		when(_repository.delete(deletedMovie)).thenReturn(deletedMovie);
-		when(_repository.get(id)).thenReturn(deletedMovie);
+		when(_mockRepository.add(movie)).thenReturn(id);
+		when(_mockRepository.delete(deletedMovie)).thenReturn(deletedMovie);
+		when(_mockRepository.get(id)).thenReturn(deletedMovie);
 
 		_movieResource.addMovie(movie);
 		Response result = _movieResource.deleteMovie(id);
 
-		verify(_repository).add(movie);
-		verify(_repository).delete(deletedMovie);
+		verify(_mockRepository).add(movie);
+		verify(_mockRepository).delete(deletedMovie);
 		assertNotNull(result);
 		assertEquals(Response.status(Response.Status.OK).build().getStatus(), result.getStatus());
 	}
