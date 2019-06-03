@@ -21,15 +21,7 @@ public class MovieRepositoryTest {
 	}
 
 	@Test
-	public void testMovieRepository() {
-		testgetAll();
-		testAdd();
-		testGet();
-		testUpdate();
-		testDelete();
-	}
-
-	private void testgetAll() {
+	public void testgetAll() {
 		List<Movie> expected = new ArrayList<>();
 		List<Movie> movies = _movieRepository.getAll();
 
@@ -37,7 +29,8 @@ public class MovieRepositoryTest {
 		assertEquals(expected, movies);
 	}
 
-	private void testAdd() {
+	@Test
+	public void testAdd() {
 		Movie movie = new Movie(1L, new MovieData("title"));
 
 		List<Movie> expected = new ArrayList<>();
@@ -50,15 +43,18 @@ public class MovieRepositoryTest {
 		assertEquals(expected, movies);
 	}
 
-	private void testGet() {
+	@Test
+	public void testGet() {
 		// TODO
 	}
 
-	private void testUpdate() {
+	@Test
+	public void testUpdate() {
 		// TODO
 	}
 
-	private void testDelete() {
+	@Test
+	public void testDelete() {
 		// TODO
 	}
 
