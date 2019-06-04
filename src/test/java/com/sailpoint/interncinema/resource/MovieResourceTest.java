@@ -54,8 +54,8 @@ public class MovieResourceTest {
 
 		Response result = _movieResource.addMovie(movie);
 
-		verify(_mockRepository).add(movie);
 		assertNotNull(result);
+		assertEquals(result.getEntity(), null);
 		assertEquals(Response.status(Response.Status.CREATED).build().getStatus(), result.getStatus());
 	}
 
@@ -80,9 +80,8 @@ public class MovieResourceTest {
 		_movieResource.addMovie(movie);
 		Response result = _movieResource.updateMovie(updatedMovie);
 
-		verify(_mockRepository).add(movie);
-		verify(_mockRepository).update(updatedMovie);
 		assertNotNull(result);
+		assertEquals(result.getEntity(), updatedMovie);
 		assertEquals(Response.status(Response.Status.OK).build().getStatus(), result.getStatus());
 	}
 
@@ -108,9 +107,8 @@ public class MovieResourceTest {
 		_movieResource.addMovie(movie);
 		Response result = _movieResource.deleteMovie(id);
 
-		verify(_mockRepository).add(movie);
-		verify(_mockRepository).delete(deletedMovie);
 		assertNotNull(result);
+		assertEquals(result.getEntity(), deletedMovie);
 		assertEquals(Response.status(Response.Status.OK).build().getStatus(), result.getStatus());
 	}
 
